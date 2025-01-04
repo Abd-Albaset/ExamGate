@@ -23,51 +23,16 @@ class QuestionController extends Controller
        return $question;
     }
 
+    
+
     public function store(StoreQuestionRequest $request) {
-        $question = [
-            'subject_id' => $request->input('subject_id'),
-            'number'     => $request->input('number'),
-            'session'    => $request->input('session'),
-            'q-text'     => $request->input('q-text')
-        ];
 
-        $answers = json_decode($request->input('answers'), true) ;
-//        if(json_last_error() === JSON_ERROR_NONE){
-//            var_dump($answers);
-//        }else{
-//            echo "err" . json_last_error();
-//        }
-        if(Question::rightAnswersCount($answers) > 1)
-            return response()->json('a question can not has more than one right answer');
+        $questionData = $this->prepareQuestionData($request);
 
-        if(count($answers) > 5)
-            return response()->json('a question can not has more than five answer');
+        $answers = $this->validateAnswers($request);
 
-        $labels = array_unique(array_map(fn($arr) => $arr['label'], $answers));
+        $question = $this->saveQuestionAndAnswers($questionData, $answers, $request);
 
-        if (count($labels) != count($answers))
-            return response()->json('a label can not be dublicated');
-
-        if($request->hasFile('q-img')){
-            $path = saveImg('q-img','questions_Img');
-            $question['q-img'] = $path;
-        }
-
-        $question = Question::create($question);
-
-        foreach ($answers as $answer){
-            // send A-img in request for answer A image and so on
-            if($request->hasFile($answer['label'] . '-img') ){
-                $path = saveImg($answer['label']. '-img','answers_Img');
-                $answer['a-img'] = $path;
-                // ASCII value of A is 65 so it will result as 0 for A as it is first array element and so on
-                $answers[ord($answer['label']) - 65] ['a-img'] = $path;
-            }
-        }
-
-        $question->answers()->createMany($answers);
-
-        $question->answers;  // to load the 'answers' relations to '$question' object
         return $question;
     }
 
@@ -93,6 +58,62 @@ class QuestionController extends Controller
         $deleted = $question;
         $question->delete();
         return $deleted;
+    }
+
+    private function prepareQuestionData(StoreQuestionRequest $request): array
+    {
+        $question = [
+            'subject_id' => $request->input('subject_id'),
+            'number'     => $request->input('number'),
+            'session'    => $request->input('session'),
+            'q-text'     => $request->input('q-text')
+        ];
+
+        if ($request->hasFile('q-img')) {
+            $path = saveImg('q-img', 'questions_Img');
+            $question['q-img'] = $path;
+        }
+
+        return $question;
+    }
+
+    private function validateAnswers(StoreQuestionRequest $request)
+    {
+        $answers = json_decode($request->input('answers'), true);
+
+        if (Question::rightAnswersCount($answers) > 1) {
+            throw new \Exception('A question cannot have more than one right answer.');
+        }
+
+        if (count($answers) > 5) {
+            throw new \Exception('A question cannot have more than five answers.');
+        }
+
+        $labels = array_unique(array_map(fn($arr) => $arr['label'], $answers));
+        if (count($labels) != count($answers)) {
+            throw new \Exception('A label cannot be duplicated.');
+        }
+
+        return $answers;
+    }
+
+    private function saveQuestionAndAnswers(array $questionData, array $answers, StoreQuestionRequest $request): Question
+    {
+        $question = Question::create($questionData);
+
+        foreach ($answers as $answer){
+            // send A-img in request for answer A image and so on
+            if($request->hasFile($answer['label'] . '-img') ){
+                $path = saveImg($answer['label']. '-img','answers_Img');
+                $answer['a-img'] = $path;
+                // ASCII value of A is 65 so it will result as 0 for A as it is first array element and so on
+                $answers[ord($answer['label']) - 65] ['a-img'] = $path;
+            }
+        }
+
+        $question->answers()->createMany($answers);
+
+        return $question->load('answers'); // Load the 'answers' relationship
     }
 
 }
