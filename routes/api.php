@@ -8,6 +8,7 @@ use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdminController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,10 +39,12 @@ Route::post('logout', [AuthController::class,'logout']);
 Route::middleware('auth:api')->prefix('exams')->group(function (){
     Route::get('/',[ExamController::class,'index']);
     Route::get('/{subject:name}/{session}',[ExamController::class,'getExamData']);
-    Route::post('/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
+//    Route::post('/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
 });
 
+Route::post('exams/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
+
 Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (){
-    Route::get('/addInstructor/{user}',[\App\Http\Controllers\AdminController::class,'addInstructor']);
-    Route::get('/roleReset/{user}',[\App\Http\Controllers\AdminController::class,'roleReset']);
+    Route::get('/addInstructor/{user}',[AdminController::class,'addInstructor']);
+    Route::get('/roleReset/{user}',[AdminController::class,'roleReset']);
 });
