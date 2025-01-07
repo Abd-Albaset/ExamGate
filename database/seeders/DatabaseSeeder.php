@@ -31,6 +31,44 @@ class DatabaseSeeder extends Seeder
 
         ]);
 
+        for ($i = 1; $i <= 10 ; $i++) {
+            DB::table('questions')->insert([
+                'subject_id' => 1,
+                'session' => '2020_2',
+                'number' => $i,
+                'q-text' => 'test test test'
+            ]);
+        }
+
+        for ($j = 0; $j <= 10 ; $j++) {
+            DB::table('answers')->insert([
+                [
+                'question_id' => 1,
+                'label' => 'A',
+                'a-text' => 'eco pri',
+                'IsCorrect' => 1
+                ],
+                [
+                    'question_id' => 1,
+                    'label' => 'B',
+                    'a-text' => 'eco pri',
+                    'IsCorrect' => 0
+                ],[
+                    'question_id' => 1,
+                    'label' => 'C',
+                    'a-text' => 'eco pri',
+                    'IsCorrect' => 0
+                ],[
+                    'question_id' => 1,
+                    'label' => 'D',
+                    'a-text' => 'eco pri',
+                    'IsCorrect' => 0
+                ]
+            ]);
+        }
+
+
+
 
 
         // \App\Models\User::factory(10)->create();

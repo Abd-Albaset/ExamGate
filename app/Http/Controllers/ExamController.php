@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UserAnsweredIncorrectly;
 use App\Models\Answer;
+use App\Models\ExamLog;
 use App\Models\Question;
 use App\Models\Subject;
 use Illuminate\Http\Request;
@@ -16,8 +18,8 @@ class ExamController extends Controller
 
     public function getExamData(Subject $subject, $session) {
         return Question::where('subject_id', $subject->id)
-                            ->where('session', $session)
-                            ->with('answers')->get();
+            ->where('session', $session)
+            ->with('answers')->get();
     }
 
     public function marksEvaluate(Request $request, Subject $subject, $session)
@@ -25,26 +27,32 @@ class ExamController extends Controller
         // Fetch correct answers
         $rightAnswers = Answer::whereHas('question', function ($query) use ($subject, $session) {
             $query->where('subject_id', $subject->id)
-                ->where('session', $session);
-        })
+                ->where('session', $session);})
             ->where('IsCorrect', true)
-            ->pluck('label');
+            ->get();
 
-        // Validate user answers
         if (!$this->validateUserAnswers($request)) {
             return response()->json('A label must be in [A, B, C, D, E]', 400);
         }
 
-        // Normalize user answers (fill missing answers with 'X')
-        $userAnswers = $this->normalizeUserAnswers($request, $rightAnswers);
+        $rightAnswersLabels = $rightAnswers->pluck('label');
 
-        // Calculate marks and identify mistakes
+        $userAnswers = $this->normalizeUserAnswers($request, $rightAnswersLabels);
+
         $result = $this->calculateMarks($rightAnswers, $userAnswers);
 
-        // Return the result
+        // Dispatch the event to save incorrect question IDs
+        event(new UserAnsweredIncorrectly(
+            auth()->id(),
+            $subject->id,
+            $session,
+            $result['incorrectQuestionIds']
+        ));
+
         return response()->json([
             "marks" => $result['marks'],
             "mistakes" => $result['mistakes'],
+            "incorrectQuestionIds" =>$result['incorrectQuestionIds'],
         ]);
     }
 
@@ -68,6 +76,7 @@ class ExamController extends Controller
     {
         $userAnswers = $request->toArray();
 
+
         // Ensure the userAnswers array has the same length as rightAnswers
         for ($i = 1; $i <= count($rightAnswers); $i++) {
             if (!isset($userAnswers[$i])) {
@@ -77,6 +86,11 @@ class ExamController extends Controller
 
         // Sort the array by keys to ensure the answers are in the correct order
         ksort($userAnswers);
+
+
+//        for ($j = 0 ; ($j < count($rightAnswers) - count($userAnswers)) ; $j++) {
+//            array_pop($userAnswers);
+//        }
 
         return $userAnswers;
     }
@@ -88,13 +102,16 @@ class ExamController extends Controller
     {
         $marks = 0;
         $mistakes = [];
+        $incorrectQuestionIds = []; // Array to store IDs of incorrectly answered questions
 
-        foreach ($rightAnswers as $index => $ra) {
+        foreach ($rightAnswers->pluck('label') as $index => $ra) {
             if ($ra == $userAnswers[$index + 1]) {
                 $marks++;
             } else {
                 $mistakes[$index + 1] = $ra;
+                $incorrectQuestionIds[] = $rightAnswers[$index]->question_id;  // 0 based array $rightAnswers
             }
+
         }
 
         $marks = ceil(($marks / count($rightAnswers)) * 100);
@@ -102,6 +119,7 @@ class ExamController extends Controller
         return [
             'marks' => $marks,
             'mistakes' => $mistakes,
+            'incorrectQuestionIds' => $incorrectQuestionIds, // IDs of incorrectly answered questions
         ];
     }
 

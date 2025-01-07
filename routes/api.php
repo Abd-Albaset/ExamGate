@@ -39,10 +39,10 @@ Route::post('logout', [AuthController::class,'logout']);
 Route::middleware('auth:api')->prefix('exams')->group(function (){
     Route::get('/',[ExamController::class,'index']);
     Route::get('/{subject:name}/{session}',[ExamController::class,'getExamData']);
-//    Route::post('/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
+    Route::post('/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
 });
 
-Route::post('exams/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
+// Route::post('exams/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);////////////////////////
 
 Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (){
     Route::get('/addInstructor/{user}',[AdminController::class,'addInstructor']);
