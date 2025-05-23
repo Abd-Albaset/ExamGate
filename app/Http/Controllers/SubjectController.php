@@ -3,19 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Models\Subject;
-use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
 class SubjectController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api','role:instructor'], ['except' => ['index','show']]);
+
     }
 
     public function index() {
-        return Subject::paginate(6);
-        // return csrf_token();
+        return Subject::all();
     }
 
     public function show(Subject $subject){

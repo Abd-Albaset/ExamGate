@@ -6,13 +6,12 @@ use App\Http\Requests\StoreQuestionRequest;
 use App\Models\Question;
 use Illuminate\Validation\Rule;
 
-use function PHPSTORM_META\map;
+
 
 class QuestionController extends Controller
 {
     public function __construct()
     {
-        $this->middleware(['auth:api','role:instructor'], ['except' => ['index','show']]);
     }
 
     public function index() {
@@ -23,7 +22,7 @@ class QuestionController extends Controller
        return $question;
     }
 
-    
+
 
     public function store(StoreQuestionRequest $request) {
 

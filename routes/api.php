@@ -21,9 +21,33 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::resource('subjects', SubjectController::class)->except(['create', 'edit']);
-Route::resource('questions', QuestionController::class)->except(['create', 'edit']);
-Route::resource('answers', AnswerController::class)->except(['create', 'edit']);
+
+Route::get('subjects', [SubjectController::class, 'index']);
+Route::get('subjects/{subject}', [SubjectController::class, 'show']);
+
+Route::middleware(['auth:api', 'role:instructor'])->group(function () {
+    Route::post('subjects', [SubjectController::class, 'store']);
+    Route::put('subjects/{subject}', [SubjectController::class, 'update']);
+    Route::delete('subjects/{subject}', [SubjectController::class, 'destroy']);
+});
+
+Route::get('questions', [QuestionController::class, 'index']);
+Route::get('questions/{question}', [QuestionController::class, 'show']);
+
+Route::middleware(['auth:api', 'role:instructor'])->group(function () {
+    Route::post('questions', [QuestionController::class, 'store']);
+    Route::put('questions/{question}', [QuestionController::class, 'update']);
+    Route::delete('questions/{question}', [QuestionController::class, 'destroy']);
+});
+
+Route::get('answers', [AnswerController::class, 'index']);
+Route::get('answers/{answer}', [AnswerController::class, 'show']);
+
+Route::middleware(['auth:api', 'role:instructor'])->group(function () {
+    Route::post('answers', [AnswerController::class, 'store']);
+    Route::put('answers/{answer}', [AnswerController::class, 'update']);
+    Route::delete('answers/{answer}', [AnswerController::class, 'destroy']);
+});
 
 Route::post('register',[AuthController::class,'register']);
 Route::post('login', [AuthController::class,'login']);
