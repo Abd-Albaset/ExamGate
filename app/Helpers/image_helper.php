@@ -1,16 +1,20 @@
 <?php
 
 use Carbon\Carbon;
+use Illuminate\Http\UploadedFile;
 
 if(!function_exists('saveImg')){
-    function saveImg($requestFieldName, $savePath)
+    /**
+     * @param UploadedFile $file
+     * @param $savePath
+     * @return false|string
+     */
+    function saveImg(UploadedFile $file , $savePath)
     {
-            $file = request()->file($requestFieldName);
             $originalName =$file->getClientOriginalName(); //name.extension
             $extension = pathinfo($originalName, PATHINFO_EXTENSION);
             $timestamp = Carbon::now()->format('YmdHis');
             $newFileName = pathinfo($originalName, PATHINFO_FILENAME) . '_' . $timestamp . '.' . $extension; // nameTime.extension
-            return $path = $file->storeAs($savePath, $newFileName);
-
+            return $file->storeAs($savePath, $newFileName);
     }
 }
