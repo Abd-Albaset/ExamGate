@@ -21,12 +21,6 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-Route::get('/', [Controller::class,'getCSRF']);
-
 Route::resource('subjects', SubjectController::class)->except(['create', 'edit']);
 Route::resource('questions', QuestionController::class)->except(['create', 'edit']);
 Route::resource('answers', AnswerController::class)->except(['create', 'edit']);
@@ -34,15 +28,13 @@ Route::resource('answers', AnswerController::class)->except(['create', 'edit']);
 Route::post('register',[AuthController::class,'register']);
 Route::post('login', [AuthController::class,'login']);
 Route::post('refresh', [AuthController::class,'refresh']);
-Route::post('logout', [AuthController::class,'logout']);
+Route::post('logout', [AuthController::class,'logout'])->middleware('auth:api');
 
 Route::middleware('auth:api')->prefix('exams')->group(function (){
     Route::get('/',[ExamController::class,'index']);
     Route::get('/{subject:name}/{session}',[ExamController::class,'getExamData']);
     Route::post('/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);
 });
-
-// Route::post('exams/{subject:name}/{session}',[ExamController::class,'marksEvaluate']);////////////////////////
 
 Route::middleware(['auth:api', 'role:admin'])->prefix('admin')->group(function (){
     Route::get('/addInstructor/{user}',[AdminController::class,'addInstructor']);
