@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateSubjectRequest;
+use App\Http\Requests\UpdateSubjectRequest;
 use App\Models\Subject;
-use Illuminate\Validation\Rule;
 
 class SubjectController extends Controller
 {
@@ -20,27 +21,27 @@ class SubjectController extends Controller
         return $subject;
     }
 
-    public function store() {
-        $attributes = request()->validate([
-            'name'       => 'required|unique:subjects,name|max:255|min:3',
-            'college_id'    => 'required',
-            'year'       => 'required',
-            'specialize' => 'required',
-            'semester'   => 'required'
-        ]);
+    public function store(CreateSubjectRequest $request) {
+        $attributes = [
+            'college_id' => $request->input('college_id'),
+            'name'       => $request->input('name'),
+            'year'       => $request->input('year'),
+            'specialize' => $request->input('specialize'),
+            'semester'   => $request->input('semester')
+        ];
 
         return Subject::create($attributes);
 
     }
 
-    public function update(Subject $subject) {
-        $attributes = request()->validate([
-            'name'       => ['required', Rule::unique('subjects', 'name')->ignore($subject) ],
-            'college_id'    =>'required',
-            'year'       => 'required',
-            'specialize' => 'required',
-            'semester'   => 'required'
-        ]);
+    public function update(UpdateSubjectRequest $request,Subject $subject) {
+        $attributes = [
+            'name'       => $request->input('name'),
+            'college_id' => $request->input('college_id'),
+            'year'       => $request->input('year'),
+            'specialize' => $request->input('specialize'),
+            'semester'   => $request->input('semester')
+        ];
 
         $subject->update($attributes);
 
