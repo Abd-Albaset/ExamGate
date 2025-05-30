@@ -14,10 +14,8 @@ return new class extends Migration
         Schema::create('questions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('subject_id')->constrained('subjects')->cascadeOnDelete();
-            $table->string('session');
-            $table->integer('number');
-            $table->text('q-text');
-            $table->string('q-img')->nullable();
+            $table->text('text');
+            $table->string('img')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

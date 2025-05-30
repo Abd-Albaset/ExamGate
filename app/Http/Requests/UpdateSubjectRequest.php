@@ -26,10 +26,6 @@ class UpdateSubjectRequest extends FormRequest
 
         return [
             'name'       => ['required', Rule::unique('subjects', 'name')->ignore($subject->id) ],
-            'college_id'    =>'required',
-            'year'       => 'required',
-            'specialize' => 'required',
-            'semester'   => 'required'
         ];
     }
 }

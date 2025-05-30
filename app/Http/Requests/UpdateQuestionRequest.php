@@ -4,14 +4,14 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateSubjectRequest extends FormRequest
+class UpdateQuestionRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      */
     public function authorize(): bool
     {
-        return true;
+        return false;
     }
 
     /**
@@ -22,7 +22,7 @@ class CreateSubjectRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'       => 'required|unique:subjects,name|max:255|min:3',
+            //
         ];
     }
 }

@@ -22,28 +22,13 @@ class SubjectController extends Controller
     }
 
     public function store(CreateSubjectRequest $request) {
-        $attributes = [
-            'college_id' => $request->input('college_id'),
-            'name'       => $request->input('name'),
-            'year'       => $request->input('year'),
-            'specialize' => $request->input('specialize'),
-            'semester'   => $request->input('semester')
-        ];
-
-        return Subject::create($attributes);
-
+        return Subject::create(
+            ['name' => $request->input('name')]
+        );
     }
 
     public function update(UpdateSubjectRequest $request,Subject $subject) {
-        $attributes = [
-            'name'       => $request->input('name'),
-            'college_id' => $request->input('college_id'),
-            'year'       => $request->input('year'),
-            'specialize' => $request->input('specialize'),
-            'semester'   => $request->input('semester')
-        ];
-
-        $subject->update($attributes);
+        $subject->update(['name' => $request->input('name')]);
 
         return response()->json($subject);
     }

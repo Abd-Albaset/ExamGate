@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('answers', function (Blueprint $table) {
             $table->id();
             $table->foreignId('question_id')->constrained('questions')->cascadeOnDelete();
-            $table->enum('label',['A', 'B', 'C', 'D', 'E']);
-            $table->text('a-text');
+            $table->text('text');
             $table->boolean('IsCorrect');
-            $table->string('a-img')->nullable();
+            $table->string('img')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

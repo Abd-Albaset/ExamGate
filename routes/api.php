@@ -2,11 +2,9 @@
 
 use App\Http\Controllers\AnswerController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Controller;
 use App\Http\Controllers\ExamController;
 use App\Http\Controllers\QuestionController;
 use App\Http\Controllers\SubjectController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 
