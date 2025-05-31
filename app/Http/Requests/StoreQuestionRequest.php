@@ -23,9 +23,9 @@ class StoreQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject_id' => ['required', Rule::exists('subjects', 'id')],
-            'text'     => 'required',
-            'img'     => 'image',
+            'subject_id' => ['sometimes', 'required', Rule::exists('subjects', 'id')],
+            'text' => 'string',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
 
         ];
     }

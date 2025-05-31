@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateQuestionRequest extends FormRequest
 {
@@ -11,7 +12,7 @@ class UpdateQuestionRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,10 @@ class UpdateQuestionRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'subject_id' => ['required', Rule::exists('subjects', 'id')],
+            'text' => 'required|string',
+            'img' => 'nullable|image|mimes:jpeg,png,jpg|max:2048', // 2MB max
+
         ];
     }
 }

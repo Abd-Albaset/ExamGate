@@ -34,7 +34,7 @@ Route::get('questions/{question}', [QuestionController::class, 'show']);
 
 Route::middleware(['auth:api', 'role:instructor'])->group(function () {
     Route::post('questions', [QuestionController::class, 'store']);
-    Route::put('questions/{question}', [QuestionController::class, 'update']);
+    Route::post('questions/{question}', [QuestionController::class, 'update']);
     Route::delete('questions/{question}', [QuestionController::class, 'destroy']);
 });
 
