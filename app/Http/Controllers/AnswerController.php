@@ -24,15 +24,14 @@ class AnswerController extends Controller
     public function store(CreateAnswerRequest $request){
         $attributes = [
             'question_id' => $request->input('question_id'),
-            'label'       => $request->input('label'),
-            'a-text'      => $request->input('a-text'),
-            'a-img'       => $request->input('a-img'),
+            'text'      => $request->input('text'),
+            'img'       => $request->input('img'),
             'IsCorrect'   => $request->input('IsCorrect'),
         ];
 
-        if($request->hasFile('a-img')){
-            $path = saveImg($request->file('a-img') ,'answers_Img');
-            $attributes['a-img'] = $path;
+        if($request->hasFile('img')){
+            $path = saveImg($request->file('img') ,'answers_Img');
+            $attributes['img'] = $path;
         }
         return Answer::create($attributes);
     }
