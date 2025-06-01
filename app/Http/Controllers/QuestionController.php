@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreQuestionRequest;
 use App\Http\Requests\UpdateQuestionRequest;
 use App\Models\Question;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 
@@ -49,8 +50,13 @@ class QuestionController extends Controller
         ];
 
         if($request->hasFile('img')){
+            $oldImgPath = $question->img;
+
             $path = saveImg($request->file('img') ,'QuestionImg');
             $attributes['img'] = $path;
+
+            if($oldImgPath)
+                Storage::delete($oldImgPath);
         }
 
         $question->update($attributes);

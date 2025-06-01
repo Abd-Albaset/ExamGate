@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateAnswerRequest;
 use App\Http\Requests\UpdateAnswerRequest;
 use App\Models\Answer;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class AnswerController extends Controller
@@ -45,9 +46,15 @@ class AnswerController extends Controller
         ];
 
         if($request->hasFile('img')){
+            $oldImgPath = $answer->img;
+
             $path = saveImg($request->file('img') ,'answers_Img');
             $attributes['img'] = $path;
+
+            if($oldImgPath)
+                Storage::delete($oldImgPath);
         }
+
 
         $answer->update($attributes);
 
