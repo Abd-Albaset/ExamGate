@@ -24,9 +24,8 @@ class UpdateAnswerRequest extends FormRequest
     {
         return [
             'question_id' => ['required', Rule::exists("questions", 'id')],
-            'label'     => 'required|max:1',
-            'a-text'    => 'required|max:255',
-            'a-img'     => 'image|mimes:jpeg,png,jpg|max:2048',
+            'text'    => 'required|max:255',
+            'img'     => 'image|mimes:jpeg,png,jpg|max:2048',
             'IsCorrect' => 'required|boolean'
         ];
     }

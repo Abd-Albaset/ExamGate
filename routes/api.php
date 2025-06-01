@@ -43,7 +43,7 @@ Route::get('answers/{answer}', [AnswerController::class, 'show']);
 
 Route::middleware(['auth:api', 'role:instructor'])->group(function () {
     Route::post('answers', [AnswerController::class, 'store']);
-    Route::put('answers/{answer}', [AnswerController::class, 'update']);
+    Route::post('answers/{answer}', [AnswerController::class, 'update']);
     Route::delete('answers/{answer}', [AnswerController::class, 'destroy']);
 });
 
