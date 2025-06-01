@@ -64,6 +64,11 @@ class AnswerController extends Controller
     public function destroy(Answer $answer){
         $temp = $answer;
         $answer->delete();
+
+        $oldImgPath = $answer->img;
+        if($oldImgPath)
+            Storage::delete($oldImgPath);
+
         return $temp;
     }
 }

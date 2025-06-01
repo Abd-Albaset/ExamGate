@@ -66,6 +66,11 @@ class QuestionController extends Controller
     public function destroy(Question $question) {
         $deleted = $question;
         $question->delete();
+
+        $oldImgPath = $question->img;
+        if($oldImgPath)
+            Storage::delete($oldImgPath);
+
         return $deleted;
     }
 }
